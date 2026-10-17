@@ -1,0 +1,18 @@
+# Este arquivo guarda só a configuração das ferramentas.
+# As dependências ficam no requirements.txt.
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F: erros comuns, I: ordem dos imports, B: bugs prováveis, UP: sintaxe moderna
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff.lint.isort]
+# A pasta alembic/ do projeto confunde o Ruff: o pacote alembic é externo.
+known-third-party = ["alembic"]
