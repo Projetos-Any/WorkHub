@@ -51,6 +51,8 @@ A página inicial deve mostrar **API: ok**.
 Para parar: `Ctrl + C` no terminal, ou `docker compose down` em outro terminal.
 O código fica espelhado dentro dos containers, então é só salvar o arquivo que a API e o front recarregam sozinhos. Use `--build` de novo quando mudar o `requirements.txt` ou o `package.json`.
 
+Alguma porta já está em uso por outro projeto? Troque `POSTGRES_PORT`, `API_PORT` ou `WEB_PORT` no `.env` (os comentários do `.env.example` explicam o que ajustar junto).
+
 ## Jeito 2: modo desenvolvimento
 
 Só o banco roda no Docker; a API e o front rodam direto na sua máquina. É melhor para usar o debugger e ver os erros mais rápido. Use três terminais:
@@ -83,7 +85,7 @@ npm install
 npm run dev
 ```
 
-Os endereços são os mesmos da tabela acima.
+Os endereços são os mesmos da tabela acima. Não rode o Jeito 1 e o Jeito 2 ao mesmo tempo: os dois usam as mesmas portas.
 
 ### Rodando lint, testes e build
 
