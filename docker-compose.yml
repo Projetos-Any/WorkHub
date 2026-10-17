@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16-alpine
+    env_file: .env
+    ports:
+      # Porta do seu computador : porta dentro do container.
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # Guarda os dados do banco mesmo depois de "docker compose down".
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    env_file: .env
+    environment:
+      # Dentro da rede do Compose, o banco é acessado pelo nome do serviço.
+      POSTGRES_HOST: db
+      # Entre containers a porta é sempre a interna do Postgres.
+      POSTGRES_PORT: 5432
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      # Espelha o código local no container: salvou, a API recarrega.
+      - ./backend:/app
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    ports:
+      - "${WEB_PORT:-5173}:5173"
+    volumes:
+      - ./frontend:/app
+      # Mantém o node_modules instalado no container, sem usar o da sua máquina.
+      - /app/node_modules
+    depends_on:
+      - api
+
+volumes:
+  db_data:
